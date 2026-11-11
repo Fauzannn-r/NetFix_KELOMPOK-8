@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetFix — EasyPlay Network Troubleshooting Game (SMK TKJ)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Decorative Background Shapes -->
+  <div class="bg-decor bg-decor-left"></div>
+  <div class="bg-decor bg-decor-right"></div>
+
+  <!-- Confetti / Particle Layer for Playful Celebrations -->
+  <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+  <!-- Main Outer App Shell (Mirrors EasyPlay Dashboard Frame) -->
+  <div class="app-shell">
+
+
+    
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside class="sidebar">
+      <div>
+        <!-- Brand Logo like "EasY PlaY" -->
+        <div class="brand-logo" id="brandLogoHome" title="Kembali ke Beranda">
+          <div class="brand-text-stack">
+            <span>Net</span>
+            <span>Fix</span>
+          </div>
+          <div class="brand-emblem">Y</div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="side-nav" aria-label="Navigasi Utama">
+          <button type="button" class="side-link btn-active-tab" data-nav="view-home">
+            <span class="side-icon">🏠</span>
+            <span class="side-label">Beranda</span>
+          </button>
+          <button type="button" class="side-link" data-nav="view-cases">
+            <span class="side-icon">🎯</span>
+            <span class="side-label">Pilih Kasus</span>
+            <span class="side-badge" id="sideCaseBadge">3</span>
+          </button>
+          <button type="button" class="side-link" data-nav="view-sim">
+            <span class="side-icon">🕹️</span>
+            <span class="side-label">Simulasi Lab</span>
+          </button>
+          <button type="button" class="side-link" data-nav="view-summary">
+            <span class="side-icon">🏆</span>
+            <span class="side-label">Skor & Rapor</span>
+          </button>
+          <button type="button" class="side-link" data-nav="view-code">
+            <span class="side-icon">💻</span>
+            <span class="side-label">Kode Sumber</span>
+          </button>
+
+          <div class="side-divider"></div>
+
+          <button type="button" class="side-link side-link-sub" data-quick-case="0">
+            <span class="side-icon">🔌</span>
+            <span class="side-label">Layer 1 • Fisik</span>
+          </button>
+          <button type="button" class="side-link side-link-sub" data-quick-case="1">
+            <span class="side-icon">🌐</span>
+            <span class="side-label">Layer 3 • Gateway</span>
+          </button>
+          <button type="button" class="side-link side-link-sub" data-quick-case="2">
+            <span class="side-icon">🔍</span>
+            <span class="side-label">Layer 7 • DNS</span>
+          </button>
+
+          <div class="side-divider"></div>
+
+          <button type="button" class="side-link side-link-muted" id="btnSideGuide">
+            <span class="side-icon">❓</span>
+            <span class="side-label">Panduan ADDIE</span>
+          </button>
+          <button type="button" class="side-link side-link-muted" id="btnSideTeam">
+            <span class="side-icon">🛡️</span>
+            <span class="side-label">Kelompok 8 TKJ</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Bottom Promo Card (Like "GET Bonus" in Reference Image) -->
+      <div class="sidebar-bonus-card" id="sidebarBonusCard">
+        <div class="bonus-badge-circle">AIJ</div>
+        <div class="bonus-title">GET<br /><span>SKOR 300</span></div>
+        <p class="bonus-sub">Tuntaskan 3 Kasus Lab</p>
+        <button type="button" class="btn-bonus-pill" id="btnSidebarQuickStart">Mulai Lab</button>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <div class="main-area">
+      <!-- Top Header Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="globalSearchInput" placeholder="Cari kasus (kabel, gateway, DNS, ping)..." autocomplete="off" />
+          </div>
+          <div class="top-links">
+            <button type="button" class="top-text-link active" data-nav="view-home">Turnamen Lab</button>
+            <button type="button" class="top-text-link" data-nav="view-cases">Skenario AIJ</button>
+            <button type="button" class="top-text-link" data-nav="view-sim">Live Console</button>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="icon-bell-btn" id="btnToggleAudio" title="Toggle Suara Interaktif">
+            <span id="audioIconSpan">🔊</span>
+            <span class="bell-dot" id="audioDot"></span>
+          </button>
+
+          <button type="button" class="wallet-score-pill" id="topScorePill" data-nav="view-summary" title="Lihat Skor & Evaluasi">
+            <span class="wallet-icon">🏆</span>
+            <span id="topScoreDisplay">Skor: 0</span>
+          </button>
+
+          <div class="user-avatar-chip" title="Siswa Kelas XI SMK TKJ • Kelompok 8">
+            <div class="avatar-ring">
+              <svg viewBox="0 0 40 40" width="34" height="34">
+                <circle cx="20" cy="20" r="20" fill="#dbeafe" />
+                <circle cx="20" cy="15" r="7" fill="#2563eb" />
+                <path d="M8 35 C8 26 32 26 32 35" fill="#1d4ed8" />
+                <circle cx="20" cy="14" r="5" fill="#fde68a" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ==================== VIEW 1: BERANDA (EASYPLAY DASHBOARD STYLE) ==================== -->
+      <section id="view-home" class="view-section active">
+        <div class="bento-dashboard">
+          <!-- LEFT / CENTER MAIN COLUMN -->
+          <div class="bento-main">
+            <!-- 1. Royal Blue Hero Banner -->
+            <div class="hero-card">
+              <div class="hero-wave hero-wave-1"></div>
+              <div class="hero-wave hero-wave-2"></div>
+
+              <div class="hero-content">
+                <div class="hero-counter-pill">
+                  <span class="counter-icon">🎮</span>
+                  <span>300 Poin Maks</span>
+                </div>
+                <h1 class="hero-title">Online Network Lab</h1>
+                <h2 class="hero-subtitle">Play & Fix Your Favorite Topology</h2>
+                <p class="hero-desc">
+                  Media interaktif berbasis siklus <strong>Amati → Duga → Uji → Simpulkan → Evaluasi</strong> untuk mata pelajaran <strong>Administrasi Infrastruktur Jaringan (AIJ)</strong> Kelas XI SMK TKJ.
+                </p>
+                <div class="hero-actions">
+                  <button type="button" class="btn-yellow-pill" id="btnHeroStart">
+                    Register & Mulai Simulasi →
+                  </button>
+                  <button type="button" class="btn-glass-pill" id="btnHeroCode">
+                    Lihat Modular Code
+                  </button>
+                </div>
+              </div>
+
+              <!-- Playful Floating Hero Character Illustration -->
+              <div class="hero-illustration" aria-hidden="true">
+                <svg viewBox="0 0 280 250" class="floating-mascot">
+                  <defs>
+                    <linearGradient id="armorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#38bdf8" />
+                      <stop offset="100%" stop-color="#1e3a8a" />
+                    </linearGradient>
+                    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#fde047" />
+                      <stop offset="100%" stop-color="#f59e0b" />
+                    </linearGradient>
+                  </defs>
+                  <!-- Glowing Back Aura -->
+                  <circle cx="150" cy="125" r="82" fill="rgba(255,255,255,0.14)" />
+                  <circle cx="150" cy="125" r="60" fill="rgba(56,189,248,0.22)" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="6 6" />
+                  <!-- Floating Network Nodes around Character -->
+                  <g class="orbit-group">
+                    <circle cx="65" cy="70" r="14" fill="#ffde2e" />
+                    <text x="65" y="74" text-anchor="middle" font-size="10" font-weight="800" fill="#1e293b">IP</text>
+                    <circle cx="235" cy="65" r="16" fill="#38bdf8" />
+                    <text x="235" y="69" text-anchor="middle" font-size="10" font-weight="800" fill="#0f172a">DNS</text>
+                    <circle cx="228" cy="185" r="15" fill="#4ade80" />
+                    <text x="228" y="189" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">LAN</text>
+                  </g>
+                  <!-- Cyber Character Torso & Cape -->
+                  <path d="M95 195 Q150 225 205 195 L188 120 L112 120 Z" fill="url(#armorGrad)" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" />
+                  <!-- Shoulder Pads -->
+                  <path d="M82 135 Q102 105 128 122 L115 150 Z" fill="#f8fafc" stroke="#1e3a8a" stroke-width="2.5" />
+                  <path d="M218 135 Q198 105 172 122 L185 150 Z" fill="#f8fafc" stroke="#1e3a8a" stroke-width="2.5" />
+                  <!-- Chest Core Emblem -->
+                  <polygon points="150,132 165,148 150,168 135,148" fill="url(#goldGrad)" stroke="#fff" stroke-width="2" />
+                  <!-- Head & Cyber Visor -->
+                  <circle cx="150" cy="86" r="30" fill="#fed7aa" stroke="#1e3a8a" stroke-width="3" />
+                  <!-- Spiky Anime Hair -->
+                  <path d="M114 78 Q118 42 152 46 Q178 36 190 66 Q202 58 192 84 Q175 62 150 66 Q128 64 114 78 Z" fill="#1e293b" />
+                  <!-- Glowing Cyber Glasses -->
+                  <rect x="126" y="76" width="48" height="14" rx="7" fill="#0ea5e9" stroke="#ffffff" stroke-width="2.5" />
+                  <line x1="134" y1="81" x2="146" y2="81" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round" />
+                  <!-- Smile -->
+                  <path d="M142 99 Q150 105 158 99" fill="none" stroke="#9a3412" stroke-width="2.5" stroke-linecap="round" />
+                  <!-- Cyber Optic Cable Sword / Staff -->
+                  <line x1="72" y1="185" x2="215" y2="95" stroke="url(#goldGrad)" stroke-width="7" stroke-linecap="round" />
+                  <circle cx="218" cy="93" r="10" fill="#ffde2e" stroke="#fff" stroke-width="3" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- 2. Top Characters Style -> Top Skenario Kasus -->
+            <div class="section-head">
+              <h3 class="section-title">Top Skenario Kasus</h3>
+              <button type="button" class="more-link-btn" data-nav="view-cases">Semua Kasus (3) ›</button>
+            </div>
+
+            <div class="top-characters-grid" id="homeTopCasesGrid">
+              <!-- Populated dynamically in script.js so scores/states stay live -->
+            </div>
+
+            <!-- 3. Center Live Arena Card (Matches "TimeLibe Stream" 01:31:22 Card in Image) -->
+            <div class="stream-showcase-card">
+              <!-- Floating Blue Timer Widget on Top-Left -->
+              <div class="stream-timer-widget">
+                <div class="timer-widget-title">Siklus Keputusan ADDIE</div>
+                <div class="timer-boxes">
+                  <div class="timer-box">
+                    <span class="timer-num" id="homeWidgetCasesDone">00</span>
+                    <span class="timer-lbl">Tuntas</span>
+                  </div>
+                  <div class="timer-box">
+                    <span class="timer-num">05</span>
+                    <span class="timer-lbl">Tahap</span>
+                  </div>
+                  <div class="timer-box">
+                    <span class="timer-num" id="homeWidgetScore">00</span>
+                    <span class="timer-lbl">Skor</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Left Mini Badges -->
+              <div class="stream-side-badges">
+                <div class="mini-circle-badge badge-blue" title="Mata Pelajaran AIJ">AIJ</div>
+                <div class="mini-square-badge" title="SMK TKJ Zone">TKJ<br /><small>LAB</small></div>
+                <div class="mini-text-badge">SMK KELAS XI</div>
+              </div>
+
+              <!-- Main Visual Arena Preview -->
+              <div class="stream-banner-visual" id="homeStreamBanner">
+                <div class="stream-banner-overlay">
+                  <div class="stream-network-lines">
+                    <span class="net-node-pill">Router-GW (192.168.10.1)</span>
+                    <span class="net-link-dash"></span>
+                    <span class="net-node-pill">Switch-Lab</span>
+                    <span class="net-link-dash broken"></span>
+                    <span class="net-node-pill alert">PC-Client-01</span>
+                  </div>
+                  <button type="button" class="play-pulse-btn" id="btnHomeLaunchSim" title="Buka Simulasi Interaktif">
+                    ▶
+                  </button>
+                  <div class="stream-caption">Klik tombol Play untuk masuk ke Simulation Dashboard</div>
+                </div>
+                <span class="stream-duration-pill">03 KASUS LAB</span>
+              </div>
+            </div>
+
+            <!-- 4. Horizontal Cycle Strip (Matches Overwatch / Dota 2 / CS Go / LoL Row) -->
+            <div class="mini-games-row">
+              <div class="mini-game-card" data-step-preview="1">
+                <div class="mg-avatar mg-av-1">👁️</div>
+                <div class="mg-info">
+                  <div class="mg-head"><span>1. Amati</span><span class="mg-tag">OSI</span></div>
+                  <div class="mg-stats">
+                    <div><strong>+20</strong><small>OBSERVE</small></div>
+                    <div><strong>LED</strong><small>INDIKATOR</small></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mini-game-card active-blue" data-step-preview="2">
+                <div class="mg-avatar mg-av-2">💡</div>
+                <div class="mg-info">
+                  <div class="mg-head"><span>2. Duga</span><span class="mg-tag">HIPOTESIS</span></div>
+                  <div class="mg-stats">
+                    <div><strong>+30</strong><small>POIN</small></div>
+                    <div><strong>3</strong><small>OPSI</small></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mini-game-card" data-step-preview="3">
+                <div class="mg-avatar mg-av-3">🛠️</div>
+                <div class="mg-info">
+                  <div class="mg-head"><span>3. Uji Lab</span><span class="mg-tag">CLI</span></div>
+                  <div class="mg-stats">
+                    <div><strong>+30</strong><small>POIN</small></div>
+                    <div><strong>3</strong><small>TOOLS</small></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mini-game-card" data-step-preview="4">
+                <div class="mg-avatar mg-av-4">⚡</div>
+                <div class="mg-info">
+                  <div class="mg-head"><span>4. Simpulkan</span><span class="mg-tag">SOLUSI</span></div>
+                  <div class="mg-stats">
+                    <div><strong>+20</strong><small>FIX</small></div>
+                    <div><strong>100</strong><small>TOTAL</small></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Matchup Section (Matches "Overwatch Game" silver team vs silver team + center character) -->
+            <div class="section-head">
+              <h3 class="section-title">Simulasi Topologi & Perangkat Lab</h3>
+              <div class="carousel-arrows">
+                <button type="button" class="arrow-pill" data-quick-case="0" title="Kasus 1">‹</button>
+                <button type="button" class="arrow-pill" data-quick-case="1" title="Kasus 2">›</button>
+              </div>
+            </div>
+
+            <div class="matchup-grid">
+              <!-- Left Match Card -->
+              <div class="matchup-card" data-quick-case="0">
+                <span class="connect-pill">Layer 1 Connect</span>
+                <div class="matchup-top-icon">🔌</div>
+                <div class="matchup-teams">
+                  <div class="team-col">
+                    <div class="laurel-badge">🖧</div>
+                    <div class="team-name">Switch-Lab</div>
+                    <div class="team-star">★ 4.9</div>
+                  </div>
+                  <div class="match-score-col">
+                    <div class="score-pill-row">
+                      <span class="score-sq blue">1</span>
+                      <span>:</span>
+                      <span class="score-sq">1</span>
+                    </div>
+                    <div class="match-lbl">Kabel UTP</div>
+                    <div class="yellow-time-pill">RJ45-ETH0</div>
+                  </div>
+                  <div class="team-col">
+                    <div class="laurel-badge red">💻</div>
+                    <div class="team-name">PC-Client</div>
+                    <div class="team-star">★ 4.8</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Center Tall Character Card -->
+              <div class="center-hero-mini" data-nav="view-sim">
+                <div class="chm-head">
+                  <div>
+                    <h4>Play Your<br />Favorite Role</h4>
+                    <span class="chm-sub">Network Engineer</span>
+                  </div>
+                  <div class="chm-badges">
+                    <span class="chm-dot">AIJ</span>
+                    <span class="chm-pc">TKJ</span>
+                  </div>
+                </div>
+                <div class="chm-art">
+                  <div class="yellow-sun-circle"></div>
+                  <svg viewBox="0 0 160 150" class="chm-svg">
+                    <path d="M55 135 L80 65 L105 135 Z" fill="#1e3a8a" />
+                    <circle cx="80" cy="52" r="20" fill="#fde68a" stroke="#1e3a8a" stroke-width="3" />
+                    <path d="M62 46 Q80 28 98 46" fill="#2563eb" />
+                    <rect x="66" y="47" width="28" height="9" rx="4.5" fill="#38bdf8" />
+                    <path d="M35 120 L125 75" stroke="#eab308" stroke-width="8" stroke-linecap="round" />
+                    <circle cx="35" cy="120" r="10" fill="#4ade80" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Right Match Card -->
+              <div class="matchup-card" data-quick-case="2">
+                <span class="connect-pill">Layer 7 Connect</span>
+                <div class="matchup-top-icon">🌐</div>
+                <div class="matchup-teams">
+                  <div class="team-col">
+                    <div class="laurel-badge">🛡️</div>
+                    <div class="team-name">Router-GW</div>
+                    <div class="team-star">★ 5.0</div>
+                  </div>
+                  <div class="match-score-col">
+                    <div class="score-pill-row">
+                      <span class="score-sq blue">3</span>
+                      <span>:</span>
+                      <span class="score-sq">1</span>
+                    </div>
+                    <div class="match-lbl">DNS Query</div>
+                    <div class="yellow-time-pill">10.10.10.2</div>
+                  </div>
+                  <div class="team-col">
+                    <div class="laurel-badge">🗄️</div>
+                    <div class="team-name">Server-DNS</div>
+                    <div class="team-star">★ 4.9</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Bottom Free Banner (Matches "Get Game For Free") -->
+            <div class="bottom-promo-banner">
+              <div class="promo-left">
+                <h3>Belajar AIJ<br />Jadi <span class="yellow-highlight">Seru!</span></h3>
+                <button type="button" class="btn-yellow-pill" data-nav="view-cases">
+                  Ikuti Tantangan Kasus
+                </button>
+              </div>
+
+              <div class="promo-center-mascot" aria-hidden="true">
+                <svg viewBox="0 0 140 120" width="130" height="110">
+                  <circle cx="70" cy="60" r="46" fill="rgba(255,255,255,0.15)" />
+                  <polygon points="70,15 110,95 30,95" fill="#38bdf8" stroke="#fff" stroke-width="3" stroke-linejoin="round" />
+                  <circle cx="70" cy="62" r="16" fill="#ffde2e" />
+                  <text x="70" y="67" text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a">TKJ</text>
+                </svg>
+              </div>
+
+              <div class="promo-right-card">
+                <div class="prc-brand">KELOMPOK 8<br /><span>SMK TKJ XI</span></div>
+                <button type="button" class="btn-yellow-pill btn-sm" data-nav="view-code">Kode Sumber</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT WIDGET SIDEBAR COLUMN (Matches Right Column in Image) -->
+          <aside class="bento-side">
+            <!-- Widget 1: Game Categories -->
+            <div class="side-widget-card widget-game-top">
+              <div class="wg-info">
+                <h4>Modul AIJ</h4>
+                <div class="wg-tags">
+                  <div class="wg-tag-item"><span class="wg-dot purple"></span> LAYER 1 FISIK</div>
+                  <div class="wg-tag-item"><span class="wg-dot amber"></span> IPV4 GATEWAY</div>
+                  <div class="wg-tag-item"><span class="wg-dot red"></span> DNS RESOLVER</div>
+                </div>
+                <button type="button" class="btn-yellow-pill btn-xs" data-nav="view-cases">Pilih Kategori</button>
+              </div>
+              <div class="wg-art">
+                <svg viewBox="0 0 90 110" width="84" height="100">
+                  <circle cx="48" cy="55" r="38" fill="#dbeafe" />
+                  <circle cx="48" cy="46" r="22" fill="#fed7aa" />
+                  <path d="M24 42 Q48 16 72 42" fill="#1e3a8a" />
+                  <rect x="31" y="40" width="34" height="10" rx="5" fill="#2563eb" />
+                  <path d="M22 98 C22 74 74 74 74 98" fill="#1d4ed8" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Widget 2: Streams / Diagnostic Tools -->
+            <div class="side-widget-card">
+              <h4>Alat Diagnostik</h4>
+              <div class="wg-thumbs-row">
+                <div class="wg-thumb thumb-1" data-nav="view-sim" title="Buka Visualisasi Topologi">
+                  <span>Topologi Live</span>
+                  <i class="mini-play">▶</i>
+                </div>
+                <div class="wg-thumb thumb-2" data-nav="view-sim" title="Buka Terminal CLI">
+                  <span>Terminal CLI</span>
+                  <i class="mini-play">▶</i>
+                </div>
+              </div>
+              <button type="button" class="btn-yellow-pill btn-xs" data-nav="view-sim">Buka Simulasi</button>
+            </div>
+
+            <!-- Widget 3: Matches / Target Kompetensi -->
+            <div class="side-widget-card widget-matches">
+              <div class="wg-info">
+                <h4>Evaluasi</h4>
+                <div class="wg-vs-badges">
+                  <span class="vs-icon">🏆</span>
+                  <span class="vs-text">VS</span>
+                  <span class="vs-icon">⚡</span>
+                </div>
+                <button type="button" class="btn-yellow-pill btn-xs" data-nav="view-summary">Lihat Rapor</button>
+              </div>
+              <div class="wg-art-mini">🎯</div>
+            </div>
+
+            <!-- Widget 4: Last Streams -> Daftar Kasus Cepat -->
+            <div class="side-widget-card">
+              <h4>Daftar Misi Kasus</h4>
+              <p class="wg-sub">pilih kasus untuk langsung bermain</p>
+
+              <div class="last-streams-list" id="homeQuickStreamList">
+                <!-- Populated dynamically in script.js -->
+              </div>
+
+              <button type="button" class="all-streams-link" data-nav="view-cases">Lihat Semua Skenario ›</button>
+            </div>
+
+            <!-- Widget 5: Tim Pengembang Kelompok 8 -->
+            <div class="side-widget-card team-widget-card" id="teamWidgetCard">
+              <h4>Tim Kelompok 8</h4>
+              <p class="wg-sub">Literasi TIK & Media Pembelajaran</p>
+              <ul class="team-mini-list">
+                <li><strong>Fauzan Raditiya</strong> <span>2513025024</span></li>
+                <li><strong>Jeni Anggraini</strong> <span>2513025040</span></li>
+                <li><strong>Nadia Valentina</strong> <span>2513025044</span></li>
+                <li><strong>Ahmad Avicena K.</strong> <span>2513025058</span></li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 2: CASE SELECT ==================== -->
+      <section id="view-cases" class="view-section">
+        <div class="view-header-banner">
+          <div>
+            <span class="pill-tag-light">Personalized Learning Pathway • AIJ Kelas XI</span>
+            <h2>Pilih Skenario Kasus Troubleshooting</h2>
+            <p>Pilih salah satu tantangan di bawah ini untuk mendiagnosis gangguan jaringan dengan siklus ADDIE.</p>
+          </div>
+          <button type="button" class="btn-yellow-pill" data-nav="view-sim">Lanjut ke Simulasi Aktif →</button>
+        </div>
+
+        <div class="cases-grid" id="casesContainer"></div>
+      </section>
+
+      <!-- ==================== VIEW 3: SIMULATION DASHBOARD ==================== -->
+      <section id="view-sim" class="view-section">
+        <div class="sim-top-bar">
+          <div>
+            <div class="sim-breadcrumb">SIMULATION ARENA • SIKLUS KEPUTUSAN INTERAKTIF</div>
+            <h2 id="simCaseTitle">KASUS 01</h2>
+            <p id="simCaseSub"></p>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.65rem;flex-wrap:wrap;">
+            <span id="simStatusBadge" class="difficulty-badge diff-hard">STATUS: GANGGUAN TERDETEKSI</span>
+            <button type="button" class="btn btn-outline" data-nav="view-cases">Ganti Kasus</button>
+          </div>
+        </div>
+
+        <!-- Animated Step Progress Pills -->
+        <div class="step-tracker" id="stepTracker"></div>
+
+        <div class="sim-layout">
+          <!-- Left: Visual Topology & Terminal Log -->
+          <div class="panel-card sim-visual-card">
+            <div class="sim-card-head">
+              <span class="sim-card-title">🌐 Live Topology Visualizer (Klik Node Untuk Inspeksi)</span>
+              <span class="sim-legend">● Hijau: Paket Normal &nbsp;|&nbsp; ● Merah: Titik Gangguan</span>
+            </div>
+
+            <div class="canvas-wrapper">
+              <canvas id="topologyCanvas"></canvas>
+              <div id="canvasNodeTooltip" class="canvas-tooltip"></div>
+            </div>
+
+            <div class="terminal-header">
+              <span>💻 Terminal Log Diagnostik</span>
+              <span class="terminal-ver">SMK-TKJ Network Console v2.0</span>
+            </div>
+            <div class="terminal-box" id="terminalOutput">
+              <div class="term-line">[SYSTEM] Silakan amati gejala awal dan ikuti langkah diagnosis di panel kanan.</div>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Decision Cycle Panel -->
+          <div class="panel-card decision-card" id="decisionPanelContent"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 4: SUMMARY REPORT ==================== -->
+      <section id="view-summary" class="view-section">
+        <div class="panel-card">
+          <div class="view-header-banner" style="margin-bottom:1.25rem;">
+            <div>
+              <span class="pill-tag-light">Gamified Progress Tracking</span>
+              <h2>Summary Report & Capaian Kompetensi Siswa</h2>
+              <p>Rekapitulasi otomatis hasil diagnosis troubleshooting jaringan komputer pada mata pelajaran AIJ.</p>
+            </div>
+            <button type="button" class="btn-yellow-pill" data-nav="view-cases">Mainkan Kasus Lainnya →</button>
+          </div>
+
+          <div class="summary-stats-grid">
+            <div class="summary-stat-card">
+              <div class="stat-icon-circle blue">🎯</div>
+              <div>
+                <div class="cycle-caption">Ketuntasan Kasus</div>
+                <div id="summaryTotalCases" class="stat-big-val">0 / 3 Kasus</div>
+              </div>
+            </div>
+            <div class="summary-stat-card">
+              <div class="stat-icon-circle yellow">⭐</div>
+              <div>
+                <div class="cycle-caption">Total Skor Akurasi & Efisiensi</div>
+                <div id="summaryTotalScore" class="stat-big-val">0 / 300 Poin</div>
+              </div>
+            </div>
+            <div class="summary-stat-card">
+              <div class="stat-icon-circle green">🏆</div>
+              <div>
+                <div class="cycle-caption">Predikat Kompetensi</div>
+                <div id="summaryRankBadge" class="stat-rank-val">Pemula</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>Kode</th>
+                  <th>Skenario Kasus</th>
+                  <th>Level</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Skor</th>
+                </tr>
+              </thead>
+              <tbody id="summaryTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 5: MODULAR CODE VIEWER ==================== -->
+      <section id="view-code" class="view-section">
+        <div class="panel-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem;">
+            <div>
+              <span class="pill-tag-light">Modular Web Architecture</span>
+              <h2 style="font-size:1.35rem;margin-top:0.25rem;">Struktur Kode Sumber Terpisah (HTML, CSS, JS)</h2>
+              <p style="font-size:0.86rem;color:var(--text-muted);">
+                Arsitektur proyek NetFix dipisahkan secara rapi menjadi <code>index.html</code>, <code>style.css</code>, <code>cases.js</code>, <code>audio.js</code>, dan <code>script.js</code>.
+              </p>
+            </div>
+            <button type="button" class="btn-yellow-pill" id="btnCopyCode">📋 Salin Kode File Ini</button>
+          </div>
+
+          <div class="code-tabs">
+            <button type="button" class="btn btn-outline btn-active-tab" data-code-file="index.html">index.html</button>
+            <button type="button" class="btn btn-outline" data-code-file="style.css">style.css</button>
+            <button type="button" class="btn btn-outline" data-code-file="cases.js">cases.js (Data Kasus)</button>
+            <button type="button" class="btn btn-outline" data-code-file="audio.js">audio.js (Web Audio)</button>
+            <button type="button" class="btn btn-outline" data-code-file="script.js">script.js (Game Engine)</button>
+          </div>
+
+          <pre class="code-block-view" id="codeBlockContent"></pre>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Pemanggilan File JavaScript Terpisah -->
+  <script src="cases.js"></script>
+  <script src="audio.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
